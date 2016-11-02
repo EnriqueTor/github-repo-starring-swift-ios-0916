@@ -18,10 +18,10 @@ class ReposTableViewController: UITableViewController {
         self.tableView.accessibilityLabel = "tableView"
         self.tableView.accessibilityIdentifier = "tableView"
         
-        store.getRepositoriesWithCompletion {
-            OperationQueue.main.addOperation({ 
+        store.getRepositoriesFromAPI {
+            DispatchQueue.main.async {
                 self.tableView.reloadData()
-            })
+            }
         }
     }
 
@@ -41,4 +41,37 @@ class ReposTableViewController: UITableViewController {
         return cell
     }
 
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        let repo = store.repositories[indexPath.row] 
+        
+        store.toggleStarStatus(for: repo) { (isStarred) in
+        
+//        ReposDataStore.toggleStarStatus(for: repo) { (isStarred)
+        
+            let alertAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+            
+            switch isStarred {
+                
+            case false:
+                print("I'm not working")
+                let alertStarred = UIAlertController(title: "Starred", message: "You just starred \(repo.fullName)", preferredStyle: .alert)
+                alertStarred.addAction(alertAction)
+                self.present(alertStarred, animated: true, completion: nil)
+                // self.alert.accessibilityLabel = "You just starred \(repo.fullName)"
+                
+            case true:
+                print("I'm not working, REALLY!!!")
+                let alertUnstarred = UIAlertController(title: "Unstarred", message: "You just unstarred \(repo.fullName)", preferredStyle: .alert)
+                alertUnstarred.addAction(alertAction)
+                self.present(alertUnstarred, animated: true, completion: nil)
+                // self.alert.accessibilityLabel = "You just unstarred \(repo.fullName)"
+            }
+            
+//            alert.addAction(alertAction)
+//            self.present(alert, animated: true, completion: nil)
+        }
+
+    }
+    
 }

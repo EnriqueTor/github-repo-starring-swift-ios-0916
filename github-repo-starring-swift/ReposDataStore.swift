@@ -15,7 +15,8 @@ class ReposDataStore {
     
     var repositories:[GithubRepository] = []
     
-    func getRepositoriesWithCompletion(_ completion: @escaping () -> ()) {
+    //getRepo
+    func getRepositoriesFromAPI(_ completion: @escaping () -> ()) {
         GithubAPIClient.getRepositoriesWithCompletion { (reposArray) in
             self.repositories.removeAll()
             for dictionary in reposArray {
@@ -27,5 +28,27 @@ class ReposDataStore {
             completion()
         }
     }
-
+    
+    //toggleStar
+    func toggleStarStatus(for repo:GithubRepository, completion: @escaping (Bool) -> ()) {
+        
+        GithubAPIClient.checkIfRepositoryIsStarred(fullName: repo.fullName) { (isStarred) in
+            
+            switch isStarred {
+                
+            case true:
+                GithubAPIClient.unstarRepository(named: repo.fullName, completion: {
+                    completion(true)
+                })
+                
+            case false:
+                GithubAPIClient.starRepository(named:repo.fullName, completion: {
+                    completion(false)
+                })
+            
+            }
+        }
+    }
 }
+
+
